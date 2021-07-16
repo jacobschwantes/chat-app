@@ -1,12 +1,9 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/solid'
-const apiKey = '92b6054cc5ae55e3c2cf90e86b63b095'
 
 export default function Settings(props) {
     const [text, setText] = useState('');
-    const [image, setImage] = useState('');
     async function handleSubmit(e) {
         e.preventDefault();
         props.username(text);
@@ -15,9 +12,6 @@ export default function Settings(props) {
     function handleChange(e) {
         setText(e.target.value);
     };
-    function handleImage(e) {
-        setImage(e.target.files[0]);
-    }
     return (
         <Transition.Root show={props.open} as={Fragment}>
             <Dialog as="div" static className="fixed inset-0 overflow-hidden" open={props.open} onClose={props.update}>
@@ -101,7 +95,7 @@ export default function Settings(props) {
                                                                         className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                                                                     >
                                                                         <span>Upload a file</span>
-                                                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleImage}/>
+                                                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" />
                                                                     </label>
                                                                     <p className="pl-1">or drag and drop</p>
                                                                 </div>
@@ -126,7 +120,7 @@ export default function Settings(props) {
                                             type="submit"
                                             className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                         >
-                                            Save
+                                            Update
                                         </button>
                                     </div>
                                 </form>
