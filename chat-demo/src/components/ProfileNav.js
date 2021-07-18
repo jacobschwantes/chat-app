@@ -14,7 +14,7 @@ export default function ProfileNav (props){
                           <div>
                             <Menu.Button className="max-w-xs bg-white rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 lg:p-2 lg:rounded-md lg:hover:bg-gray-50">
                               <img
-                                className="rounded-full border-2 border-blue-700 h-10 w-10 object-cover"
+                                className="rounded-full border-2 border-indigo-700 h-10 w-10 object-cover"
                                 src={props.user.photoURL}
                                 alt=""
                               />

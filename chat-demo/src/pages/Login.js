@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { signin, signInWithGoogle, signInWithGitHub } from "../helpers/auth";
+import { auth } from "../services/firebase";
+import { signin, signInWithGoogle, signInWithGitHub, signInWithTwitter } from "../helpers/auth";
 import Alert from "../components/Alert";
 export default class Login extends Component {
   constructor() {
@@ -13,6 +14,8 @@ export default class Login extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.googleSignIn = this.googleSignIn.bind(this);
     this.githubSignIn = this.githubSignIn.bind(this);
+    this.twitterSignIn = this.twitterSignIn.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
   }
 
   handleChange(event) {
@@ -25,7 +28,22 @@ export default class Login extends Component {
     event.preventDefault();
     this.setState({ error: "" });
     try {
-      await signin(this.state.password, this.state.email);
+      await signin(this.state.email, this.state.password);
+    } catch (error) {
+      this.setState({ error: error.message });
+    }
+  }
+  async resetPassword() {
+    try {
+      await auth().sendPasswordResetEmail(this.state.email)
+      this.setState({ error: 'Password reset email sent!'})
+    } catch (error) {
+      this.setState({ error: error.message });
+    }
+  }
+  async twitterSignIn() {
+    try {
+      await signInWithTwitter();
     } catch (error) {
       this.setState({ error: error.message });
     }
@@ -63,7 +81,7 @@ export default class Login extends Component {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" action="#" onSubmit={this.handleSubmit}>
+          <form className="space-y-4" action="#" onSubmit={this.handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -98,6 +116,7 @@ export default class Login extends Component {
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
+              <button type="button" onClick={this.resetPassword} className=" font-medium text-indigo-600 hover:text-indigo-500 text-sm" >forgot your password?</button>
             </div>
 
            
@@ -128,11 +147,11 @@ export default class Login extends Component {
                   onClick={this.googleSignIn}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
-                  <span className="sr-only">Sign in with Facebook</span>
-                  <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                  <span className="sr-only">Sign in with Google</span>
+                  <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 50 50">
                     <path
                       fillRule="evenodd"
-                      d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z"
+                      d="M 25.996094 48 C 13.3125 48 2.992188 37.683594 2.992188 25 C 2.992188 12.316406 13.3125 2 25.996094 2 C 31.742188 2 37.242188 4.128906 41.488281 7.996094 L 42.261719 8.703125 L 34.675781 16.289063 L 33.972656 15.6875 C 31.746094 13.78125 28.914063 12.730469 25.996094 12.730469 C 19.230469 12.730469 13.722656 18.234375 13.722656 25 C 13.722656 31.765625 19.230469 37.269531 25.996094 37.269531 C 30.875 37.269531 34.730469 34.777344 36.546875 30.53125 L 24.996094 30.53125 L 24.996094 20.175781 L 47.546875 20.207031 L 47.714844 21 C 48.890625 26.582031 47.949219 34.792969 43.183594 40.667969 C 39.238281 45.53125 33.457031 48 25.996094 48 Z"
                       clipRule="evenodd"
                     />
                   </svg>
@@ -141,7 +160,7 @@ export default class Login extends Component {
 
               <div>
                 <button
-                  href="#"
+                  onClick={this.twitterSignIn}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <span className="sr-only">Sign in with Twitter</span>

@@ -83,9 +83,10 @@ export default class Chat extends Component {
   update(status) {
     this.setState({ open: status })
   }
-  async updateUser(name) {
+  async updateUser(name, url) {
     await auth().currentUser.updateProfile({
-      displayName: name
+      displayName: name,
+      photoURL: url
     })
   }
   classNames(...classes) {
@@ -94,8 +95,8 @@ export default class Chat extends Component {
 
   render() {
     return (
-      <div className="h-screen bg-white xl:overflow-y-hidden">
-        <Settings {...this.state} update={this.update} username={this.updateUser} />
+      <div className="h-screen bg-white scrollbar-hide">
+        <Settings {...this.state} update={this.update} updateProfile={this.updateUser} />
         <Popover className="relative bg-white shadow">
           {({ open }) => (
             <>
@@ -104,7 +105,7 @@ export default class Chat extends Component {
                   <div className="flex justify-start lg:w-0 lg:flex-1">
                     <a href="/">
                       <span className="sr-only">Chatty</span>
-                      <h1 className="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl text-indigo-600 xl:inline">Chatty</h1>
+                      <h1 className="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl text-indigo-700 xl:inline">Chatty</h1>
                     </a>
                   </div>
                   <div className="-mr-2 -my-2 md:hidden">
@@ -150,15 +151,14 @@ export default class Chat extends Component {
                           </Popover.Button>
                         </div>
                       </div>
-                      <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-                        <button
-                          onClick={() => auth().signOut()}
-                          className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-                        >
-                          Sign out
-                        </button>
-                      </div>
                       <div>
+                        
+                        <button
+                          onClick={() => this.update(true)}
+                          className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium mt-3 text-white bg-indigo-600 hover:bg-indigo-700"
+                        >
+                          Settings
+                        </button>
                         <button
                           onClick={() => auth().signOut()}
                           className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium mt-3 text-white bg-indigo-600 hover:bg-indigo-700"
@@ -185,7 +185,7 @@ export default class Chat extends Component {
           {/* chat area */}
           {this.state.chats.map(chat => {
             return (
-              <div className={"text-2xl tracking-tight text-white rounded-3xl p-6 m-5 max-w-lg break-words" + (this.state.user.uid === chat.uid ? " bg-blue-700 ml-auto" : " bg-gray-700 mr-auto")}>
+              <div className={"text-2xl tracking-tight text-white rounded-3xl p-6 m-5 max-w-lg break-words" + (this.state.user.uid === chat.uid ? " bg-indigo-700 ml-auto" : " bg-gray-700 mr-auto")}>
                 <p className="text-base text-white mb-3 "><span><img className="mr-2 float-left rounded-full h-9 w-9 object-cover bg-white" alt="" src={chat.profileSrc}></img></span>{chat.userName}</p>
                 <p>{chat.content}</p>
                 <p className="text-sm tracking-tight text-white float-right">{this.formatTime(chat.timestamp)}</p>
@@ -197,10 +197,9 @@ export default class Chat extends Component {
           <div className="bg-white rounded-lg xl:w-3/5 xl:mx-auto">
             <div>
               <form onSubmit={this.handleSubmit}>
-                <button type="submit" className=" mt-2 whitespace-nowrap float-right inline-flex items-center justify-center px-6 ml-2 h-14 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">Send</button>
-                <input required className="form-control mt-2 float-right rounded-lg xl:w-1/3 lg:w-1/2 md:w-1/2 sm:w-4/6 xs:w-full w-3/5 h-14" name="content" onChange={this.handleChange} type="text" value={this.state.content}></input>
+                <label for="chat" className="text-gray-700 text-sm font-medium">Send a message</label>
+                <input id="chat" required className="form-control  rounded-lg  w-full  h-14" name="content" onChange={this.handleChange} type="text" value={this.state.content}></input>
                 {this.state.error ? <p className="text-danger">{this.state.error}</p> : null}
-
               </form>
             </div>
           </div>
