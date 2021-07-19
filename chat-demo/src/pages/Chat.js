@@ -16,6 +16,7 @@ import Footer from "../components/Footer";
 let Filter = require('bad-words');
 let filter = new Filter();
 let dateFormat = require("dateformat");
+const devUID = 'DTlkEX32dzQkyLXHufyLr8EVYxh1';
 export default class Chat extends Component {
   constructor(props) {
     super(props);
@@ -196,7 +197,7 @@ export default class Chat extends Component {
           {this.state.chats.map(chat => {
             return (
               <div className={"text-2xl tracking-tight text-white rounded-3xl p-6 m-5 max-w-lg break-words" + (this.state.user.uid === chat.uid ? " bg-indigo-700 ml-auto" : " bg-gray-700 mr-auto")}>
-                <p className="text-base text-white mb-3 "><span><img className="mr-2 float-left rounded-full h-9 w-9 object-cover bg-white" alt="" src={chat.profileSrc}></img></span>{chat.userName}</p>
+                <p className="text-base text-white mb-3 "><span><img className="mr-2 float-left rounded-full h-9 w-9 object-cover bg-white" alt="" src={chat.profileSrc}></img></span><span className={"font-bold text-xs text-blue-700 bg-gray-100 rounded mr-1 " + (chat.uid === devUID ? "px-1" : null )}>{chat.uid === devUID ? 'dev' : null} </span>{chat.userName}</p>
                 <p>{chat.content}</p>
                 <p className="text-sm tracking-tight text-white float-right">{this.formatTime(chat.timestamp)}</p>
               </div>
