@@ -1,3 +1,5 @@
+
+
 import React, { Component } from "react";
 import { auth } from "../services/firebase";
 import { db } from "../services/firebase";
@@ -5,13 +7,15 @@ import { Fragment } from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import Settings from "../components/Settings";
 import ProfileNav from "../components/ProfileNav";
+import Modal from "../components/Modal";
 import {
   MenuIcon,
   XIcon,
 } from '@heroicons/react/outline'
 import Footer from "../components/Footer";
+let Filter = require('bad-words');
+let filter = new Filter();
 let dateFormat = require("dateformat");
-
 export default class Chat extends Component {
   constructor(props) {
     super(props);
@@ -23,10 +27,12 @@ export default class Chat extends Component {
       writeError: null,
       loadingChats: false,
       open: false,
+      modal: true,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.update = this.update.bind(this);
+    this.closeModal = this.closeModal.bind(this);
     this.myRef = React.createRef();
   }
 
@@ -62,7 +68,7 @@ export default class Chat extends Component {
     const chatArea = this.myRef.current;
     try {
       await db.ref("chats").push({
-        content: this.state.content,
+        content: filter.clean(this.state.content),
         timestamp: Date.now(),
         uid: this.state.user.uid,
         profileSrc: this.state.user.photoURL,
@@ -83,6 +89,9 @@ export default class Chat extends Component {
   update(status) {
     this.setState({ open: status })
   }
+  closeModal() {
+    this.setState({modal: false})
+  }
   async updateUser(name, url) {
     await auth().currentUser.updateProfile({
       displayName: name,
@@ -96,6 +105,7 @@ export default class Chat extends Component {
   render() {
     return (
       <div className="h-screen bg-white scrollbar-hide">
+        <Modal {...this.state} update={this.closeModal}/>
         <Settings {...this.state} update={this.update} updateProfile={this.updateUser} />
         <Popover className="relative bg-white shadow">
           {({ open }) => (
